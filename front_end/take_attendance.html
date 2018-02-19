@@ -1,0 +1,321 @@
+<!doctype HTML>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="IoT CA1 Assignment">
+    <meta name="author" content="Sherna Liew">
+    <title>SOMS</title>
+    <!-- CSS -->
+    <link href="node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="starter-template.css" rel="stylesheet">
+    <link href="node_modules/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <link href="node_modules/bootstrap-toggle/css/bootstrap-toggle.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" rel="stylesheet">
+    <link href="node_modules/sweetalert2/dist/sweetalert2.min.css" rel="stylesheet">
+    <!-- Javascript libraries -->
+    <script src="node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.13.0/umd/popper.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb"
+        crossorigin="anonymous"></script>
+    <script src="node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.min.js"></script>
+    <script src="node_modules/bootstrap-toggle/js/bootstrap-toggle.min.js"></script>
+    <script src="node_modules/sweetalert2/dist/sweetalert2.all.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/core-js/2.4.1/core.js"></script>
+    <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="node_modules/whatwg-fetch/fetch.js"></script>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+        <a class="navbar-brand" href="/">SOMS</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault"
+            aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="/">
+                        <i class="fa fa-home" aria-hidden="true"></i>
+                        <span class="sr-only">(current)</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="user_management.html">Users</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Attendance</a>
+                    <div class="dropdown-menu" aria-labelledby="dropdown01">
+                        <a class="dropdown-item" href="take_attendance.html">Attendance Taking</a>
+                        <a class="dropdown-item" href="attendance.html">Attendance Log</a>
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Office</a>
+                    <div class="dropdown-menu" aria-labelledby="dropdown01">
+                        <a class="dropdown-item" href="lights.html">Lights</a>
+                        <a class="dropdown-item" href="cctv.html">CCTV</a>
+                        <a class="dropdown-item" href="rooms.html">Rooms</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <main role="main" class="container">
+        <h1 class="text-primary">
+            <i class="fa fa-check-circle-o" aria-hidden="true"></i>&nbsp;Attendance Taking</h1>
+        <hr />
+    </main>
+
+    <div class="container">
+        <!-- Attendance Taking -->
+        <div class="card border-primary text-center">
+            <div class="card-header text-white bg-primary">
+                <i class="fa fa-check-circle-o" aria-hidden="true"></i>&nbsp;Attendance Taking
+            </div>
+            <div class="card-block">
+                <br />
+                <img src="rfid.png" height="300">
+                <input id="userId" type="text" style="display:none">
+                <br />
+                <br />
+                <div class="btn-group" data-toggle="buttons">
+                    <label class="btn btn-outline-primary active">
+                        <input type="radio" name="options" id="clockIn" value="clockIn" checked> Clock In
+                    </label>
+                    <label class="btn btn-outline-primary">
+                        <input type="radio" name="options" id="clockOut" value="clockOut"> Clock Out
+                    </label>
+                </div>
+                <br />
+                <p>Select either 'Clock In' or 'Clock Out' and place your NFC Mifare Card onto the RFID reader to take your
+                    attendance.
+                </p>
+                <br />
+            </div>
+            <div class="card-footer border-primary text-muted">
+            </div>
+        </div>
+        <br>
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <hr />
+        <br />
+    </div>
+    <!-- End of container -->
+    <footer class="footer bg-dark text-center">
+        <div class="container">
+            <br />
+            <span class="text-muted">&copy; 2017 - 2018 Liew Zhi Li (Sherna). All Rights Reserved.</span>
+            <br />
+            <br />
+        </div>
+    </footer>
+    <script>
+        // Init Socket.IO to make connection to the Socket.IO server at the same URL the page is being hosted on
+        var socket = io()
+
+        // Register Socket.IO event when rfid is emitted
+        socket.on('rfid', function (nfcCard) {
+            console.log("NFC Serial number: " + nfcCard);
+
+            // If 'Clock In' is checked, run clock in function
+            if ($("#clockIn").is(':checked')) {
+
+                // 1st layer
+                // Fetch the user associated to the NFC Card ID
+                fetch('api/users/getUserByNfcCard/' + nfcCard)
+                    .then((response) => {
+                        return response.json();
+                    })
+                    .then((responseData) => {
+                        var scannedUserId = responseData[0]._id;
+                        $("#userId").val(scannedUserId) // store in a hidden input cause i cant save it in fetches x.x
+                        console.log("success. scannedUserId is: ") // get user id
+                        console.log(scannedUserId)
+
+                        console.log("call checkIfClockedIn")
+
+                        // 2nd layer
+                        // Check if user has clocked in today
+                        fetch('api/attendance/checkIfClockedIn/' + scannedUserId)
+                            .then((response) => {
+                                return response.json();
+                            })
+                            .then((responseData) => {
+                                var count = responseData.count
+                                console.log("success. count is: ")
+                                console.log(count)
+
+                                if (count == 0) {
+                                    // 3rd layer yay
+                                    // Save today's attendance for the user
+                                    clockIn($("#userId").val())
+                                        .then(() => {
+                                            swal("Success", "User has successfully clocked in!", "success");
+                                        })
+                                } else {
+                                    swal("Error", "User has clocked in today already.", "error");
+
+                                }
+                            })
+                            .catch((error) => {
+                                console.log("idk what error.")
+                            })
+
+                    })
+                    .catch((error) => {
+                        console.log("Could not find the user associated to the NFC Mifare Card you just scanned.")
+                        swal("Error", "Could not find the user associated to the NFC Mifare Card you just scanned.", "error");
+                    })
+
+
+
+            } else {
+                console.log("run clock out")
+
+                // here we go again
+                // 1st layer
+                // Fetch the user associated to the NFC Card ID
+                fetch('api/users/getUserByNfcCard/' + nfcCard)
+                    .then((response) => {
+                        return response.json();
+                    })
+                    .then((responseData) => {
+                        var scannedUserId = responseData[0]._id;
+                        $("#userId").val(scannedUserId) // store in a hidden input cause i cant save it in fetches x.x
+                        console.log("success. scannedUserId is: ") // get user id
+                        console.log(scannedUserId)
+
+                        console.log("call checkIfClockedIn")
+
+                        // 2nd layer
+                        // Check if user has clocked in today
+                        fetch('api/attendance/checkIfClockedIn/' + scannedUserId)
+                            .then((response) => {
+                                return response.json();
+                            })
+                            .then((responseData) => {
+                                var count = responseData.count
+                                console.log("success. count is: ")
+                                console.log(count)
+
+                                // must be strictly 1.
+                                if (count == 1) {
+                                    // 3rd layer
+                                    // Check if user has clockked out today
+                                    fetch('api/attendance/checkIfClockedOut/' + scannedUserId)
+                                        .then((response) => {
+                                            return response.json()
+                                        })
+                                        .then((responseData) => {
+                                            var clockOutCount = responseData.count;
+                                            console.log("checkIfClockedOut success. clockOutCount is:")
+                                            console.log(responseData.count)
+
+                                            // 4th layer
+                                            // If yet to clock out, then clock out the user.
+                                            if (clockOutCount == 1) {
+                                                clockOut($("#userId").val())
+                                                    .then(() => {
+                                                        swal("Success", "User has successfully clocked out!", "success");
+                                                    })
+                                            } else {
+                                                swal("Error", "User has clocked out today already.", "error");
+                                            }
+
+                                        })
+                                        .catch((error) => {
+                                            console.log("i dont know what happened")
+                                        })
+                                } else {
+                                    swal("Error", "User has not clocked in today.", "error");
+
+                                }
+                            })
+                            .catch((error) => {
+                                console.log("idk what error.")
+                            })
+
+                    })
+                    .catch((error) => {
+                        console.log("Could not find the user associated to the NFC Mifare Card you just scanned.")
+                        swal("Error", "Could not find the user associated to the NFC Mifare Card you just scanned.", "error");
+                    })
+            }
+        });
+
+
+        // Function to fetch the user associated to the NFC Card ID
+        function getUserByNfcCard(nfcCardId) {
+            return $.ajax({
+                url: 'api/users/getUserByNfcCard/' + nfcCardId,
+                type: 'GET'
+            })
+        }
+
+        // Function to check if the user has clocked in today
+        // User can only clock in once per day
+        function checkIfClockedIn() {
+            return $.ajax({
+                url: 'api/users/getUserByNfcCard/' + nfcCardId,
+                type: 'GET'
+            })
+        }
+
+        // Function to create clock in user aka create attendance record
+        function clockIn(id) {
+            console.log("id is: " + id)
+            // Get the Attendance details as object
+            var attendance = {
+                clockInTimestamp: new Date(),
+                clockOutTimestamp: null,
+                totalClockedHours: null,
+                verificationImage: null,
+                user: id
+            }
+
+            return $.ajax({
+                url: 'api/attendance/clockIn',
+                type: 'POST',
+                data: JSON.stringify(attendance),
+                contentType: "application/json",
+            })
+        }
+
+        // Function to create clock out user aka update attendance record
+        function clockOut(id) {
+            console.log("id is: " + id)
+            // Get the Attendance details as object
+            var attendance = {
+                clockOutTimestamp: new Date(),
+            }
+
+            return $.ajax({
+                url: 'api/attendance/clockOut/' + id,
+                type: 'PUT',
+                data: JSON.stringify(attendance),
+                contentType: "application/json",
+            })
+        }
+
+        $(() => {
+
+
+
+        })
+    </script>
+</body>
+
+</html>

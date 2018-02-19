@@ -1,0 +1,337 @@
+<!doctype HTML>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="IoT CA1 Assignment">
+    <meta name="author" content="Sherna Liew">
+    <title>SOMS</title>
+    <!-- CSS -->
+    <link href="node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="colours.css" rel="stylesheet">
+    <link href="starter-template.css" rel="stylesheet">
+    <link href="node_modules/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <link href="node_modules/bootstrap-toggle/css/bootstrap-toggle.css" rel="stylesheet">
+    <link href="node_modules/sweetalert2/dist/sweetalert2.min.css" rel="stylesheet">
+    <!-- Javascript libraries -->
+    <script src="node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.13.0/umd/popper.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb"
+        crossorigin="anonymous"></script>
+    <script src="node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-duration-format/2.1.0/moment-duration-format.min.js"></script>
+    <script src="node_modules/chart.js/dist/Chart.min.js"></script>
+    <script src="node_modules/bootstrap-toggle/js/bootstrap-toggle.min.js"></script>
+    <script src="node_modules/sweetalert2/dist/sweetalert2.all.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/core-js/2.4.1/core.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="node_modules/whatwg-fetch/fetch.js"></script>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+        <a class="navbar-brand" href="index.html">SOMS</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault"
+            aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="index.html">
+                        <i class="fa fa-home" aria-hidden="true"></i>
+                        <span class="sr-only">(current)</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="user_management.html">Users</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Attendance</a>
+                    <div class="dropdown-menu" aria-labelledby="dropdown01">
+                        <a class="dropdown-item" href="take_attendance.html">Attendance Taking</a>
+                        <a class="dropdown-item" href="attendance.html">Attendance Log</a>
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Office</a>
+                    <div class="dropdown-menu" aria-labelledby="dropdown01">
+                        <a class="dropdown-item" href="lights.html">Lights</a>
+                        <a class="dropdown-item" href="cctv.html">CCTV</a>
+                        <a class="dropdown-item" href="rooms.html">Rooms</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <main role="main" class="container">
+        <h1>
+            <i class="fa fa-tachometer" aria-hidden="true"></i>&nbsp;Dashboard</h1>
+        <hr />
+    </main>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="card text-white bg-purple" style="min-height: 8em">
+                    <div class="card-body pb-0">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h4 id="registeredUsersCount">0</h4>
+                                <p>Registered Users</p>
+                            </div>
+                            <div>
+                                <i class="fa fa-user-circle-o fa-3x" aria-hidden="true"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-3">
+                <div class="card text-white bg-teal" style="min-height: 8em">
+                    <div class="card-body pb-0">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h4 id="clockedInUsersCount">0</h4>
+                                <p>Users clocked in today</p>
+                            </div>
+                            <div>
+                                <i class="fa fa-sign-in fa-3x" aria-hidden="true"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-3">
+                <div class="card text-white bg-orange" style="min-height: 8em">
+                    <div class="card-body pb-0">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h4 id="clockedOutUsersCount">0</h4>
+                                <p>Users clocked out today</p>
+                            </div>
+                            <div>
+                                <i class="fa fa-sign-out fa-3x" aria-hidden="true"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-3">
+                <div class="card text-white bg-pink" style="min-height: 8em">
+                    <div class="card-body pb-0">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h4 id="notClockedInUsersCount">0</h4>
+                                <p>Users not clocked in today</p>
+                            </div>
+                            <div>
+                                <i class="fa fa-times-circle-o fa-3x" aria-hidden="true"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <br />
+
+        <!-- User's clocked in time -->
+        <div class="card border-purple text-center">
+            <div class="card-header text-white bg-purple">
+                <i class="fa fa-calendar" aria-hidden="true"></i>&nbsp;Total No. of Clocked Hours (Today)
+            </div>
+            <div class="card-block">
+                <br />
+                <canvas id="clockedHoursChart"></canvas>
+                <br />
+            </div>
+            <div class="card-footer border-dark text-muted">
+                <button id="refreshClockedHoursChart" type="button" class="btn btn-outline-purple">
+                    <i class="fa fa-refresh" aria-hidden="true"></i>&nbsp;Refresh Clocked Hours Chart</button>
+            </div>
+        </div>
+        <br />
+        <br />
+        <hr />
+        <br />
+    </div>
+    <!-- End of container -->
+
+    <footer class="footer bg-dark text-center">
+        <div class="container">
+            <br />
+            <span class="text-muted">&copy; 2017 - 2018 Liew Zhi Li (Sherna). All Rights Reserved.</span>
+            <br />
+            <br />
+        </div>
+    </footer>
+    <script>
+        var ipAddress;
+        var $colourOptions = $("#colourOptions");
+        var $lightToggle = $("#lightToggle");
+        var lightPieChart;
+        var $totalCount = $("#totalCount");
+        var $currentState = $("#currentState");
+
+        // Init Socket.IO to make connection to the Socket.IO server at the same URL the page is being hosted on
+        var socket = io()
+
+        // Register Socket.IO event when rfid is emitted
+        socket.on('ip', function (ip) {
+            ipAddress = ip;
+        });
+
+        $(() => {
+            // Call init methods on document ready
+            initRegisteredUsersCount();
+            initClockedHoursChart();
+
+            // Refresh Attendance Chart Button onclick handler
+            $("#refreshClockedHoursChart").click(function () {
+                initClockedHoursChart();
+                swal("Refresh", "Clocked Hours chart refreshed!", "success");
+            });
+        })
+
+        // Function to initialize the registered users count
+        function initRegisteredUsersCount() {
+            console.log("initRegisteredUsersCount")
+
+            fetch('api/usersCount')
+                .then((response) => {
+                    return response.json();
+                })
+                .then((responseData) => {
+                    $('#registeredUsersCount').text(responseData.count);
+                }).then(() => {
+                    initClockedInUsersCount();
+                })
+        }
+
+        // Function to initialize the clocked in users count
+        function initClockedInUsersCount() {
+            console.log("initClockedInUsersCount")
+
+            fetch('api/attendance/clockInCount')
+                .then((response) => {
+                    return response.json();
+                })
+                .then((responseData) => {
+                    $('#clockedInUsersCount').text(responseData.count);
+                })
+                .then(() => {
+                    initClockedOutUsersCount();
+                })
+        }
+
+        // Function to initialize the clock out users count
+        function initClockedOutUsersCount() {
+            console.log("initClockedOutUsersCount")
+
+            fetch('api/attendance/clockOutCount')
+                .then((response) => {
+                    return response.json();
+                })
+                .then((responseData) => {
+                    $('#clockedOutUsersCount').text(responseData.count);
+                })
+                .then(() => {
+                    initNotClockedInUsersCount();
+                })
+        }
+
+        // Function to initialize the not clocked in users count
+        function initNotClockedInUsersCount() {
+            console.log("initNotClockedInUsersCount")
+
+            var registeredUsers = $('#registeredUsersCount').text();
+            var clockedInUsers = $('#clockedInUsersCount').text();
+            var notClockedInUsers;
+
+            notClockedInUsers = registeredUsers - clockedInUsers;
+            console.log(notClockedInUsers)
+            $('#notClockedInUsersCount').text(notClockedInUsers);
+        }
+
+        // Function to initialize the clocked hours chart
+        function initClockedHoursChart() {
+            // Get Attendance data
+            fetch('api/attendance/searchByDate/' + new Date())
+                .then((response) => {
+                    return response.json();
+                })
+                .then((responseData) => {
+                    // console.log(responseData)
+                    drawClockedHoursChart(responseData);
+                })
+        }
+
+        // Function to draw the clocked hours chart based on JSON data
+        function drawClockedHoursChart(data) {
+            var dataArr = data;
+            var users = [];
+            var totalClockedHours = [];
+
+            // Populate the data in each array
+            for (var i in dataArr) {
+                var duration = moment.duration(data[i].totalClockedHours).format('HH');
+                totalClockedHours.push(duration)
+
+                // Error handling for when a user has been deleted
+                if (!dataArr[i].user) {
+                    users.push('[Deleted User]');
+                } else {
+                    users.push(dataArr[i].user.fullName);
+                }
+            }
+
+            var canvas = document.getElementById('clockedHoursChart');
+            var data = {
+                labels: users,
+                datasets: [
+                    {
+                        label: "Total No. of Clocked Hours (Today)",
+                        backgroundColor: "rgba(111, 66, 193, 0.2)",
+                        borderColor: "rgba(111, 66, 193, 1)",
+                        borderWidth: 2,
+                        hoverBackgroundColor: "rgba(111, 66, 193, 0.4)",
+                        hoverBorderColor: "rgba(111, 66, 193, 1)",
+                        data: totalClockedHours,
+                    }
+                ]
+            };
+            var option = {
+                scales: {
+                    yAxes: [{
+                        stacked: true,
+                        gridLines: {
+                            display: true,
+                            color: "rgba(255,99,132,0.2)"
+                        }
+                    }],
+                    xAxes: [{
+                        gridLines: {
+                            display: false
+                        }
+                    }]
+                }
+            };
+
+            var totalClockedHoursChart = Chart.Bar(canvas, {
+                data: data,
+                options: option
+            });
+        }
+    </script>
+</body>
+
+</html>

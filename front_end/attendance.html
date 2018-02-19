@@ -1,0 +1,205 @@
+<!doctype HTML>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="IoT CA1 Assignment">
+    <meta name="author" content="Sherna Liew">
+    <title>SOMS</title>
+    <!-- CSS -->
+    <link href="node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="starter-template.css" rel="stylesheet">
+    <link href="node_modules/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <link href="node_modules/bootstrap-toggle/css/bootstrap-toggle.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" rel="stylesheet">
+    <link href="node_modules/sweetalert2/dist/sweetalert2.min.css" rel="stylesheet">
+    <!-- Javascript libraries -->
+    <script src="node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.13.0/umd/popper.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb"
+        crossorigin="anonymous"></script>
+    <script src="node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-duration-format/2.1.0/moment-duration-format.min.js"></script>
+    <script src="node_modules/bootstrap-toggle/js/bootstrap-toggle.min.js"></script>
+    <script src="node_modules/sweetalert2/dist/sweetalert2.all.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/core-js/2.4.1/core.js"></script>
+    <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+        <a class="navbar-brand" href="/">SOMS</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault"
+            aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="/">
+                        <i class="fa fa-home" aria-hidden="true"></i>
+                        <span class="sr-only">(current)</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="user_management.html">Users</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Attendance</a>
+                    <div class="dropdown-menu" aria-labelledby="dropdown01">
+                        <a class="dropdown-item" href="take_attendance.html">Attendance Taking</a>
+                        <a class="dropdown-item" href="attendance.html">Attendance Log</a>
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Office</a>
+                    <div class="dropdown-menu" aria-labelledby="dropdown01">
+                        <a class="dropdown-item" href="lights.html">Lights</a>
+                        <a class="dropdown-item" href="cctv.html">CCTV</a>
+                        <a class="dropdown-item" href="rooms.html">Rooms</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <main role="main" class="container">
+        <h1 class="text-primary">
+            <i class="fa fa-calendar text-primary" aria-hidden="true"></i>&nbsp;Attendance Log</h1>
+        <hr />
+    </main>
+
+    <div class="container">
+        <!-- Attendance -->
+        <div class="card border-primary">
+            <div class="card-header text-white bg-primary">
+                <div class="form-group">
+                    <label for="searchInput">
+                        <i class="fa fa-search" aria-hidden="true"></i>&nbsp;Search</label>
+                    <input type="text" name="searchInput" class="form-control" id="searchInput" placeholder="Any Keyword">
+                </div>
+            </div>
+            <div class="card-block">
+                <br />
+                <div class="col-sm-12 col-lg-12">
+                    <table id="attendanceTable" class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>Full Name</th>
+                                <th>Clock In Timestamp</th>
+                                <th>Clock Out Timestamp</th>
+                                <th>Total Hours Clocked</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+
+                <br />
+            </div>
+            <div class="card-footer border-primary text-muted text-center">
+                <button id="refreshUsers" type="button" class="btn btn-outline-primary">Refresh</button>
+            </div>
+        </div>
+        <br />
+        <hr />
+        <br />
+    </div>
+    <!-- End of container -->
+
+
+    <footer class="footer bg-dark text-center">
+        <div class="container">
+            <br />
+            <span class="text-muted">&copy; 2017 - 2018 Liew Zhi Li (Sherna). All Rights Reserved.</span>
+            <br />
+            <br />
+        </div>
+    </footer>
+    <script>
+        var $searchInput = $('#searchInput');
+        var $attendanceTable = $("#attendanceTable");
+
+        // Datatables render
+        var CustomRenders = {
+            user: function (data, type, row, meta) {
+                if (data === null) {
+                    return "[Deleted User]"
+                }
+                return data.fullName;
+            },
+            clockInTimestamp: function (data, type, row, meta) {
+                return moment(data).format("MMM DD, YYYY hh:mm:ss A")
+            },
+            clockOutTimestamp: function (data, type, row, meta) {
+                if (data === null) {
+                    return 'Not clocked out yet';
+                } else {
+                    return moment(data).format("MMM DD, YYYY hh:mm:ss A");
+                }
+            },
+            totalClockedHours: function (data, type, row, meta) {
+                if (data === null) {
+                    return 'Not calculated yet';
+                } else {
+                    var duration = moment.duration(data);
+                    return duration.format('HH [hours] mm [mins]');
+                }
+            }
+        };
+
+        $(() => {
+            var table = initAttendanceDataTable();
+
+
+
+        })
+
+        // Function to initialize the attendace datatable
+        function initAttendanceDataTable() {
+            // Define the data to render for each column and the render style
+            var columns = [
+                { "data": "user", "render": CustomRenders.user },
+                { "data": "clockInTimestamp", "render": CustomRenders.clockInTimestamp },
+                { "data": "clockOutTimestamp", "render": CustomRenders.clockOutTimestamp },
+                { "data": "totalClockedHours", "render": CustomRenders.totalClockedHours }
+            ];
+
+            // Define datatables options
+            var options = {
+                "processing": false,
+                "autoWidth": true,
+                "serverSide": false,
+                "searching": true,
+                "columns": columns,
+                "ajax": { "url": "api/attendance", "dataSrc": "" },
+                "dom": "<'row'<'col-sm-6'l>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+                "order": [
+                    [0, "asc"]
+                ]
+            };
+
+            var dataTableApi = $attendanceTable.DataTable(options);
+
+            // On key up event handler for $searchInput
+            $searchInput.keyup(function () {
+                dataTableApi.search(this.value).draw();
+            });
+
+            // Trigger tooltips when table is redrawn
+            $attendanceTable.on('draw.dt', function () {
+                $('[data-toggle="tooltip"]').tooltip({
+                    container: 'body'
+                });
+            });
+
+            return dataTableApi;
+        }
+    </script>
+</body>
+
+</html>

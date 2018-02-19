@@ -1,0 +1,509 @@
+<!doctype HTML>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="IoT CA1 Assignment">
+    <meta name="author" content="Sherna Liew">
+    <title>SOMS</title>
+    <!-- CSS -->
+    <link href="node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="starter-template.css" rel="stylesheet">
+    <link href="node_modules/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <link href="node_modules/bootstrap-toggle/css/bootstrap-toggle.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" rel="stylesheet">
+    <link href="node_modules/sweetalert2/dist/sweetalert2.min.css" rel="stylesheet">
+    <!-- Javascript libraries -->
+    <script src="node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.13.0/umd/popper.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb"
+        crossorigin="anonymous"></script>
+    <script src="node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.min.js"></script>
+    <script src="node_modules/bootstrap-toggle/js/bootstrap-toggle.min.js"></script>
+    <script src="node_modules/sweetalert2/dist/sweetalert2.all.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/core-js/2.4.1/core.js"></script>
+    <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+        <a class="navbar-brand" href="index.html">SOMS</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault"
+            aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="index.html">
+                        <i class="fa fa-home" aria-hidden="true"></i>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="user_management.html">Users</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Attendance</a>
+                    <div class="dropdown-menu" aria-labelledby="dropdown01">
+                        <a class="dropdown-item" href="take_attendance.html">Attendance Taking</a>
+                        <a class="dropdown-item" href="attendance.html">Attendance Log</a>
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Office</a>
+                    <div class="dropdown-menu" aria-labelledby="dropdown01">
+                        <a class="dropdown-item" href="lights.html">Lights</a>
+                        <a class="dropdown-item" href="cctv.html">CCTV</a>
+                        <a class="dropdown-item" href="rooms.html">Rooms</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <main role="main" class="container">
+        <h1 class="text-info">
+            <i class="fa fa-user-circle text-info" aria-hidden="true"></i>&nbsp;Users</h1>
+        <hr />
+    </main>
+
+    <div class="container">
+        <!-- Users -->
+        <div class="card border-info">
+            <div class="card-header text-white bg-info">
+                <div class="form-group">
+                    <label for="searchInput">
+                        <i class="fa fa-search" aria-hidden="true"></i>&nbsp;Search</label>
+                    <input type="text" name="searchInput" class="form-control" id="searchInput" placeholder="Any Keyword">
+                </div>
+            </div>
+            <div class="card-block">
+                <br />
+                <div class="col-sm-12 col-lg-12">
+                    <table id="userTable" class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>Full Name</th>
+                                <th>Username</th>
+                                <th>Email</th>
+                                <th>NRIC</th>
+                                <th>NFC Mifare Card UID</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+
+                <br />
+            </div>
+            <div class="card-footer border-info text-muted text-center">
+                <button id="refreshUsers" type="button" class="btn btn-outline-info">
+                    <i class="fa fa-refresh" aria-hidden="true"></i>&nbsp;Refresh</button>
+            </div>
+        </div>
+        <br>
+    </div>
+    <!-- End of container -->
+
+    <div class="container">
+        <!-- Add New User -->
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="card border-info">
+                    <div class="card-header text-white bg-info">
+                        <i class="fa fa-user-plus" aria-hidden="true"></i>&nbsp;Add New User
+                    </div>
+                    <div class="card-block">
+                        <br />
+                        <!-- Add User form -->
+                        <div class="col-md-12">
+                            <form id="addUserForm" class="form-horizontal">
+                                <div class="form-group">
+                                    <label for="fullNameAdd">Full Name</label>
+                                    <input type="text" class="form-control" id="fullNameAdd" placeholder="Enter Full Name" pattern="^[a-zA-Z\s]*$" title="Alphbetical characters only."
+                                        required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="userNameAdd">Username</label>
+                                    <input type="text" class="form-control" id="userNameAdd" placeholder="Enter Username" pattern=".{5,20}" required title="5 to 20 characters only."
+                                        required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="emailAdd">Email address</label>
+                                    <input type="email" class="form-control" id="emailAdd" placeholder="Enter Email" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="nricAdd">NRIC</label>
+                                    <input type="text" class="form-control" id="nricAdd" placeholder="Enter NRIC" pattern="^[STFG]\d{7}[A-Z]$" title="First letter can be S/F/T/G. Followed by 7 digits. Ends with an alphabet from A-Z. All letters are in uppercase."
+                                        required>
+                                </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="card-footer border-info text-muted text-center">
+                        <button id="addUserBtn" type="button" class="btn btn-outline-info">
+                            <i class="fa fa-user-plus" aria-hidden="true"></i>&nbsp;Add New User</button>
+                    </div>
+                    </form>
+                </div>
+            </div>
+            <br />
+            <br />
+
+            <!-- Edit Existing User -->
+            <div class="col-sm-6">
+                <div class="card border-info">
+                    <div class="card-header text-white bg-info">
+                        <i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;Edit Existing User
+                    </div>
+                    <div class="card-block">
+                        <br />
+                        <!-- Edit User form -->
+                        <div class="col-md-12">
+                            <form id="addUserForm" class="form-horizontal">
+                                <div class="form-group" style="display:none">
+                                    <label for="idUpdate">Id</label>
+                                    <input type="text" class="form-control" id="idUpdate">
+                                </div>
+                                <div class="form-group">
+                                    <label for="fullNameUpdate">Full Name</label>
+                                    <input type="text" class="form-control" id="fullNameUpdate" placeholder="Enter Full Name" pattern="^[a-zA-Z\s]*$" title="Alphbetical characters only."
+                                        required disabled>
+                                </div>
+                                <div class="form-group">
+                                    <label for="userNameUpdate">Username</label>
+                                    <input type="text" class="form-control" id="userNameUpdate" placeholder="Enter Username" pattern=".{5,20}" required title="5 to 20 characters only."
+                                        required disabled>
+                                </div>
+                                <div class="form-group">
+                                    <label for="emailUpdate">Email address</label>
+                                    <input type="email" class="form-control" id="emailUpdate" placeholder="Enter Email" required disabled>
+                                </div>
+                                <div class="form-group">
+                                    <label for="nricUpdate">NRIC</label>
+                                    <input type="text" class="form-control" id="nricUpdate" placeholder="Enter NRIC" pattern="^[STFG]\d{7}[A-Z]$" title="First letter can be S/F/T/G. Followed by 7 digits. Ends with an alphabet from A-Z. All letters are in uppercase."
+                                        required disabled>
+                                </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="card-footer border-info text-muted text-center">
+                        <button id="cancelUpdateBtn" type="button" class="btn btn-outline-info" disabled>
+                            <i class="fa fa-ban" aria-hidden="true"></i>&nbsp;Cancel</button>
+                        <button id="updateUserBtn" type="button" class="btn btn-outline-info" disabled>
+                            <i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp;Save</button>
+                    </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <br />
+        <hr />
+        <br />
+
+        <!-- Enroll NFC Modal -->
+        <div class="modal fade" id="enrollNfcModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Enroll NFC Mifare Card</h5>
+                    </div>
+                    <div class="modal-body text-center">
+                        <img src="rfid.png" height="100">
+                        <br />
+                        <br />
+                        <input id="capturedUserId" type="text" style="display:none;">
+                        <input id="capturedNfcCardId" type="text" style="display:none;">
+                        <p id="modalMessage">Please place your NFC Mifare Card onto the RFID reader.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">
+                            <i class="fa fa-ban" aria-hidden="true"></i>&nbsp;Cancel</button>
+                        <button id="saveNfcCardForUser" type="button" class="btn btn-primary" data-dismiss="modal">
+                            <i class="fa fa-address-card-o" aria-hidden="true"></i>&nbsp;Enroll Card</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End of container -->
+
+    <footer class="footer bg-dark text-center">
+        <div class="container">
+            <br />
+            <span class="text-muted">&copy; 2017 - 2018 Liew Zhi Li (Sherna). All Rights Reserved.</span>
+            <br />
+            <br />
+        </div>
+    </footer>
+    <script>
+        // Init Socket.IO to make connection to the Socket.IO server at the same URL the page is being hosted on
+        var socket = io()
+
+        // Init variables
+        var table;
+        var $searchInput = $('#searchInput');
+        var $userTable = $("#userTable");
+        var $addUserBtn = $("#addUserBtn");
+        var $updateUserBtn = $("#updateUserBtn");
+        var $cancelUpdateBtn = $("#cancelUpdateBtn");
+        var $refreshUsers = $("#refreshUsers");
+        var $saveNfcCardForUser = $("#saveNfcCardForUser");
+
+        // Register Socket.IO event when rfid is emitted
+        socket.on('rfid', function (data) {
+            console.log("NFC Serial number: " + data);
+            $("#capturedNfcCardId").val(data);
+            $("#modalMessage").text("NFC Mifare Card ID: " + data);
+        });
+
+        // Datatables's Custom Renders are defined here
+        var CustomRenders = {
+            username: function (data, type, row, meta) {
+                return '<span class="badge badge-pill badge-info" style="padding: 10px">' + data + '</span>';
+            },
+            nfcCard: function (data, type, row, meta) {
+                if (data == '') {
+                    return '<span class="badge badge-pill badge-secondary" style="padding: 10px">Not Registered</span>';
+                } else {
+                    return '<span class="badge badge-pill badge-info" style="padding: 10px">' + data + '</span>';
+                }
+            },
+            actionButtons: function (data, type, row, meta) {
+                return '<div class="btn-group" role="group">'
+                    + '<button type="button" onclick="enrollNFC(\'' + data + '\')" class="btn btn-primary btn-md" data-toggle="tooltip" data-placement="top" title="Enroll NFC Mifare Card"><i class="fa fa-address-card-o" aria-hidden="true"></i></button>'
+                    + '<button type="button" onclick="prepUpdate(\'' + data + '\')" class="btn btn-warning btn-md" data-toggle="tooltip" data-placement="top" title="Edit User"><i class="fa fa-pencil" aria-hidden="true"></i></button>'
+                    + '<button type="button" onclick="deleteUser(\'' + data + '\')" class="btn btn-danger btn-md" data-toggle="tooltip" data-placement="top" title="Delete User"><i class="fa fa-trash-o" aria-hidden="true"></i></button>'
+                    + '</div>';
+            }
+        };
+
+        $(() => {
+            // Call init methods on document ready
+            table = initUserDataTable();
+
+            // Onclick event handler function for $refreshUsers
+            $refreshUsers.click(function () {
+                table.ajax.reload();
+                swal("Refresh", "Users table refreshed!", "success");
+            })
+
+            // Onclick event handler function for $addUserBtn
+            $addUserBtn.click(function () {
+                // Get the User details as object
+                var user = {
+                    fullName: $('#fullNameAdd').val(),
+                    username: $('#userNameAdd').val(),
+                    email: $('#emailAdd').val(),
+                    nric: $('#nricAdd').val(),
+                    nfcCard: ""
+                }
+
+                // AJAX call to make a POST request to api/users
+                $.ajax({
+                    url: 'api/users',
+                    type: 'POST',
+                    data: JSON.stringify(user),
+                    contentType: "application/json",
+                    success: function (data) {
+                        $('#addUserForm')[0].reset();
+
+                        // reload the all users table again
+                        table.ajax.reload();
+                        swal("User", "Successfully added new user!", "success");
+                    }
+                });
+            });
+
+            // Onclick event handler function for $updateUserBtn
+            $updateUserBtn.click(function () {
+                var id = $('#idUpdate').val()
+                // Get the User details as object
+                var user = {
+                    fullName: $('#fullNameUpdate').val(),
+                    username: $('#userNameUpdate').val(),
+                    email: $('#emailUpdate').val(),
+                    nric: $('#nricUpdate').val()
+                }
+
+                // AJAX call to make a PUT request api/users/<id>
+                $.ajax({
+                    url: 'api/users/' + id,
+                    type: 'PUT',
+                    data: JSON.stringify(user),
+                    contentType: "application/json",
+                    success: function (data) {
+                        $('form')[1].reset();
+                        $('#fullNameUpdate').prop('disabled', true);
+                        $('#userNameUpdate').prop('disabled', true);
+                        $('#emailUpdate').prop('disabled', true);
+                        $('#nricUpdate').prop('disabled', true);
+                        $('#cancelUpdateBtn').prop('disabled', true);
+                        $('#updateUserBtn').prop('disabled', true);
+
+                        // reload the all users table again
+                        table.ajax.reload();
+                        swal("User", "Successfully updated the user!", "success");
+                    }
+                });
+            });
+
+            // Onclick event handler function for $cancelUpdateBtn
+            $cancelUpdateBtn.click(function () {
+                $('form')[1].reset();
+                $('#fullNameUpdate').prop('disabled', true);
+                $('#userNameUpdate').prop('disabled', true);
+                $('#emailUpdate').prop('disabled', true);
+                $('#nricUpdate').prop('disabled', true);
+                $('#cancelUpdateBtn').prop('disabled', true);
+                $('#updateUserBtn').prop('disabled', true);
+                swal("User", "User update cancelled", "info");
+            })
+
+            // Onclick event handler function for $saveNfcCardForUser
+            $saveNfcCardForUser.click(function () {
+                var id = document.getElementById('capturedUserId').value;
+                var nfcCardId = document.getElementById('capturedNfcCardId').value;
+
+                var item = {
+                    nfcCard: nfcCardId
+                }
+
+                // AJAX call to make a PUT request to api/users/updateNfcCard/<id>
+                $.ajax({
+                    url: 'api/users/updateNfcCard/' + id,
+                    type: 'PUT',
+                    data: JSON.stringify(item),
+                    contentType: "application/json",
+                    success: function (data) {
+                        // reload the all users table again
+                        table.ajax.reload();
+                        swal("User", "Successfully saved the NFC Mifare UID for the user!", "success");
+                    }
+                });
+            })
+
+        }) // end of document.ready
+
+        // Function to initialize the user datatable
+        function initUserDataTable() {
+            // Define the data to render for each column and the render style
+            var columns = [
+                { "data": "fullName" },
+                { "data": "username", "render": CustomRenders.username },
+                { "data": "email" },
+                { "data": "nric" },
+                { "data": "nfcCard", "render": CustomRenders.nfcCard },
+                { "data": "_id", "render": CustomRenders.actionButtons }
+            ];
+
+            // Define column width
+            var columnDefs = [
+                { "width": "25%", "targets": 4 },
+                { "width": "13%", "targets": 5 }
+            ];
+
+            // Define datatables options
+            var options = {
+                "processing": false,
+                "autoWidth": true,
+                "serverSide": false,
+                "searching": true,
+                "columns": columns,
+                "columnDefs": columnDefs,
+                "ajax": { "url": "api/users", "dataSrc": "" },
+                "dom": "<'row'<'col-sm-6'l>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+                "order": [
+                    [0, "asc"]
+                ]
+            };
+
+            // Initialize datatables
+            var dataTableApi = $userTable.DataTable(options);
+
+            // On key up event handler for $searchInput
+            $searchInput.keyup(function () {
+                dataTableApi.search(this.value).draw();
+            });
+
+            // Trigger the tooltips when table is redrawn
+            $userTable.on('draw.dt', function () {
+                $('[data-toggle="tooltip"]').tooltip({
+                    container: 'body'
+                });
+            });
+
+            return dataTableApi;
+        }
+
+        // Function to prepare the Update form
+        function prepUpdate(id) {
+            console.log("id is: " + id)
+
+            // AJAX call to make a GET request to api/users/<id>
+            $.ajax({
+                url: 'api/users/' + id,
+                type: 'GET',
+                success: function (data) {
+                    // Populate values
+                    $('#idUpdate').val(data[0]._id);
+                    $('#fullNameUpdate').val(data[0].fullName);
+                    $('#userNameUpdate').val(data[0].username);
+                    $('#emailUpdate').val(data[0].email);
+                    $('#nricUpdate').val(data[0].nric);
+
+                    // Enable inputs
+                    $('#fullNameUpdate').prop('disabled', false);
+                    $('#userNameUpdate').prop('disabled', false);
+                    $('#emailUpdate').prop('disabled', false);
+                    $('#nricUpdate').prop('disabled', false);
+                    $('#cancelUpdateBtn').prop('disabled', false);
+                    $('#updateUserBtn').prop('disabled', false);
+                }
+            });
+        }
+
+        // Function to delete a specified user
+        function deleteUser(id) {
+            swal({
+                title: "Are you sure?",
+                text: "Once its deleted, it will be gone forever! :(",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+            })
+                .then((willDelete) => {
+                    if (willDelete) {
+                        $.ajax({
+                            type: 'DELETE',
+                            url: "api/users/" + id,
+                        }).done(function () {
+                            // reload the all user table again
+                            table.ajax.reload();
+                        })
+
+                        swal("Success", "Poof! The user has been deleted!", "success")
+                    }
+                });
+        }
+
+        // Function to enroll NFC card
+        function enrollNFC(id) {
+            // Reset the text & value first
+            $("#capturedNfcCardId").val("");
+            $("#modalMessage").text("Please place your NFC Mifare Card onto the RFID reader.")
+
+            // Set the capturedUserId
+            $("#capturedUserId").val(id);
+            $("#enrollNfcModal").modal('show');
+        }
+    </script>
+</body>
+
+</html>

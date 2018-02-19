@@ -1,0 +1,307 @@
+<!doctype HTML>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="IoT CA1 Assignment">
+    <meta name="author" content="Sherna Liew">
+    <title>SOMS</title>
+    <!-- CSS -->
+    <link href="node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="colours.css" rel="stylesheet">
+    <link href="starter-template.css" rel="stylesheet">
+    <link href="node_modules/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <link href="node_modules/bootstrap-toggle/css/bootstrap-toggle.css" rel="stylesheet">
+    <link href="node_modules/sweetalert2/dist/sweetalert2.min.css" rel="stylesheet">
+    <!-- Javascript libraries -->
+    <script src="node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.13.0/umd/popper.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb"
+        crossorigin="anonymous"></script>
+    <script src="node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-duration-format/2.1.0/moment-duration-format.min.js"></script>
+    <script src="node_modules/chart.js/dist/Chart.min.js"></script>
+    <script src="node_modules/bootstrap-toggle/js/bootstrap-toggle.min.js"></script>
+    <script src="node_modules/sweetalert2/dist/sweetalert2.all.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/core-js/2.4.1/core.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="node_modules/whatwg-fetch/fetch.js"></script>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+        <a class="navbar-brand" href="index.html">SOMS</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault"
+            aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="index.html">
+                        <i class="fa fa-home" aria-hidden="true"></i>
+                        <span class="sr-only">(current)</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="user_management.html">Users</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Attendance</a>
+                    <div class="dropdown-menu" aria-labelledby="dropdown01">
+                        <a class="dropdown-item" href="take_attendance.html">Attendance Taking</a>
+                        <a class="dropdown-item" href="attendance.html">Attendance Log</a>
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Office</a>
+                    <div class="dropdown-menu" aria-labelledby="dropdown01">
+                        <a class="dropdown-item" href="lights.html">Lights</a>
+                        <a class="dropdown-item" href="cctv.html">CCTV</a>
+                        <a class="dropdown-item" href="rooms.html">Rooms</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <main role="main" class="container">
+        <h1>
+            <i class="fa fa-lightbulb-o" aria-hidden="true"></i>&nbsp;Lights</h1>
+        <hr />
+    </main>
+
+    <div class="container">
+        <!-- Lights -->
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="card border-danger text-center">
+                    <div class="card-header text-white bg-danger">
+                        <i class="fa fa-power-off" aria-hidden="true"></i>&nbsp;Turn on different light colours!
+                    </div>
+                    <div class="card-block">
+                        <div id="currentState" class="alert alert-secondary" role="alert">
+                            Current state: off
+                        </div>
+                        <br />
+                        <h1>
+                            <i class="fa fa-lightbulb-o" aria-hidden="true"></i>
+                        </h1>
+                        <!-- Select colour options -->
+                        <select class="custom-select" id="colourOptions">
+                            <option value="none" selected hidden>Select a colour</option>
+                            <option value="red">Red</option>
+                            <option value="green">Green</option>
+                            <option value="blue">Blue</option>
+                            <option value="yellow">Yellow</option>
+                            <option value="magenta">Magenta</option>
+                            <option value="cyan">Cyan</option>
+                            <option value="white">White</option>
+                        </select>
+                    </div>
+                    <br />
+                    <div class="card-footer border-danger text-muted">
+                        <input id="lightToggle" type="checkbox" checked data-toggle="toggle" data-onstyle="danger">
+                        <button id="blinkLedBtn" type="button" class="btn btn-outline-danger">Blink LED</button>
+                    </div>
+                </div>
+            </div>
+            <br />
+            <br />
+
+            <div class="col-sm-6">
+                <div class="card border-danger text-center">
+                    <div class="card-header text-white bg-danger">
+                        <i class="fa fa-pie-chart" aria-hidden="true"></i>&nbsp;No. of times each light colour is on
+                    </div>
+                    <div class="card-block">
+                        <div id="totalCount" class="alert alert-secondary" role="alert">
+                            Total count: 5
+                        </div>
+                        <canvas id="lightPieChart" />
+                    </div>
+                    <br />
+                    <div class="card-footer border-danger text-muted">
+                        <button id="refreshLightChartBtn" type="button" class="btn btn-outline-danger">
+                            <i class="fa fa-refresh" aria-hidden="true"></i>&nbsp;Refresh Pie Chart</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+    </div>
+    <!-- End of container -->
+
+    <footer class="footer bg-dark text-center">
+        <div class="container">
+            <br />
+            <span class="text-muted">&copy; 2017 - 2018 Liew Zhi Li (Sherna). All Rights Reserved.</span>
+            <br />
+            <br />
+        </div>
+    </footer>
+    <script>
+        var ipAddress;
+        var $colourOptions = $("#colourOptions");
+        var $lightToggle = $("#lightToggle");
+        var lightPieChart;
+        var $totalCount = $("#totalCount");
+        var $currentState = $("#currentState");
+        var $blinkLedBtn = $("#blinkLedBtn");
+
+        // Init Socket.IO to make connection to the Socket.IO server at the same URL the page is being hosted on
+        var socket = io()
+
+        // Register Socket.IO event when rfid is emitted
+        socket.on('ip', function (ip) {
+            ipAddress = ip;
+        });
+
+        $(() => {
+            // Initialize the light doughnut chart
+            initLightPieChart();
+
+            // Refresh Light Doughnut Chart Button onclick handler
+            $("#refreshLightChartBtn").click(function () {
+                // Destroy the lightPieChart instance before re-init
+                lightPieChart.destroy();
+                initLightPieChart();
+                swal("Refresh", "Light chart refreshed!", "success");
+            });
+
+            // Onclick event handler function for $blinkLedBtn
+            $blinkLedBtn.click(() => {
+                fetch('http://' + ipAddress + ':8001/led/blink')
+                    .then((response) => {
+                        return response.json()
+                    })
+                    .then((responseData) => {
+                        // Append the 'blinking' to current state
+                        $currentState.append(' + ' + responseData.ledStatus)
+                        $blinkLedBtn.prop('disabled', true);
+                    })
+            })
+
+            // Toggle the lightToggle to off first
+            $lightToggle.bootstrapToggle('off');
+
+            // Hide the 'Blink LED' button first
+            $blinkLedBtn.hide();
+
+            // onChange event handler for lightToggle
+            $lightToggle.on('change', function () {
+                // console.log($(this).is(':checked'))
+
+                if ($(this).is(':checked')) {
+                    // On
+                    if ($colourOptions.val() == "none") {
+                        console.log("none selected")
+                    } else {
+                        // Re-enable the button
+                        $blinkLedBtn.prop('disabled', false);
+
+                        swal("Light", "Light is on!", "info", { button: "YAY!" });
+                        // Toggle the LED light
+                        toggleLed($colourOptions.val());
+
+                        // Display the 'Blink LED' button
+                        $blinkLedBtn.show();
+                    }
+                } else {
+                    // Off
+                    swal("Light", "Light is off", "info");
+                    toggleLed("off");
+                    // Hide the 'Blink LED' button
+                    $blinkLedBtn.hide();
+                }
+            });
+
+
+        })
+
+        // Function to initialize light doughnut/pie chart
+        function initLightPieChart() {
+            // Get light data
+            var jqXhr = $.ajax({
+                type: "GET",
+                url: '/api/lights',
+                async: false
+            });
+            jqXhr.done(function (data, textStatus, jqXHR) {
+                drawLightPieChart(data);
+            });
+            jqXhr.fail(function (jqXHR, textStatus, errorThrown) {
+            });
+        }
+
+        // Function to draw the light pie chart based on JSON data
+        function drawLightPieChart(data) {
+            // console.log(data)
+
+            var countArr = [];
+            var totalCount = 0;
+
+            // Populate the count
+            for (var i in data) {
+                countArr.push(data[i].total_count);
+            }
+
+            countArr.forEach(function (entry) {
+                totalCount += entry;
+            });
+
+            $totalCount.text('Total count: ' + totalCount);
+
+            var config = {
+                type: 'doughnut',
+                data: {
+                    labels: ["Blue", "Cyan", "Green", "Magenta", "Red", "White", "Yellow"],
+                    datasets: [{
+                        backgroundColor: ["#0080ff", "#7fffff", "#7FBF7F", "#ff7fff", "#FF7F7F", "#F0F0F0", "#FFFF7F"],
+                        data: countArr
+                    }]
+                },
+                options: {
+                    responsive: true
+                }
+            };
+
+            // Get context & init chart
+            var ctx = document.getElementById("lightPieChart").getContext("2d");
+            lightPieChart = new Chart(ctx, config);
+        } // end of drawLightPieChart()
+
+        // Function to toggle the LED colour
+        function toggleLed(colour) {
+            // TODO: Hardcoded URL string
+            var jqXhr = $.ajax({
+                type: "GET",
+                url: "http://" + ipAddress + ':8001/led/' + colour,
+                async: false
+            });
+            jqXhr.done(function (data, textStatus, jqXHR) {
+                if (colour != "off") {
+                    // Only init light pie chart if colour != off
+                    // Destroy the lightPieChart instance before re-init
+                    lightPieChart.destroy();
+                    initLightPieChart();
+                }
+                // Update the current state of LED
+                $currentState.text('Current state: ' + data.ledStatus);
+            });
+            jqXhr.fail(function (jqXHR, textStatus, errorThrown) {
+            });
+
+        }
+    </script>
+</body>
+
+</html>
