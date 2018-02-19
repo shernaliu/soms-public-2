@@ -1,0 +1,21 @@
+{
+  "name": "shernaliew-iot",
+  "version": "1.0.0",
+  "description": "IOT Assignment - SEAT",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Sherna Liew",
+  "license": "ISC",
+  "dependencies": {
+    "bootstrap": "^4.0.0-beta.2",
+    "bootstrap-toggle": "^2.2.2",
+    "chart.js": "^2.7.1",
+    "font-awesome": "^4.7.0",
+    "jquery": "^3.2.1",
+    "socket.io": "^2.0.4",
+    "sweetalert2": "^7.1.2",
+    "whatwg-fetch": "^2.0.3"
+  }
+}
