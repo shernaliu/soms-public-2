@@ -1,0 +1,43 @@
+.bg-purple {
+	background-color: #6f42c1 !important;
+}
+
+.bg-pink {
+	background-color: #e83e8c !important;
+}
+
+.bg-orange {
+	background-color: #fd7e14 !important;
+}
+
+.bg-teal {
+	background-color: #20c997 !important;
+}
+
+.bg-indigo {
+	background-color: #6610f2 !important;
+}
+
+.btn-outline-purple{
+	border-color: #6f42c1 !important;
+	background-color: #F5F8F8 !important;
+	color: #6f42c1 !important;
+
+}
+
+.btn-outline-purple:hover {
+	border-color: currentcolor;
+	background-color: #6f42c1 !important;
+	color: #FFFFFF !important;
+}
+
+.border-purple{
+	border-color: #6f42c1 !important;
+	color: #FFFFFF !important;
+}
+
+.bg-purple{
+	color: #6f42c1 !important;
+	color: #FFFFFF !important;
+
+}
