@@ -1,0 +1,32 @@
+{
+  "name": "shernaliew-iot",
+  "version": "1.0.0",
+  "description": "IOT CA1 Assignment",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shernaliu/iot_ca1_seat.git"
+  },
+  "author": "Sherna Liew",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/shernaliu/iot_ca1_seat/issues"
+  },
+  "homepage": "https://github.com/shernaliu/iot_ca1_seat#readme",
+  "dependencies": {
+    "aws-sdk": "^2.197.0",
+    "body-parser": "^1.18.2",
+    "express": "^4.16.2",
+    "ip": "^1.1.5",
+    "moment": "^2.20.1",
+    "mongoose": "^4.13.7",
+    "rc522": "^0.2.0",
+    "rpio": "^0.9.20",
+    "socket.io": "^2.0.4",
+    "whatwg-fetch": "^2.0.3"
+  }
+}
