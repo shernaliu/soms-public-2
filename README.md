@@ -17,7 +17,6 @@ For CA2, we will be extending from CA1 to include the functionality to allow use
 
 ## Installing SOMS
 
-Please read the documentation I have included!
 There are two parts to this project: CA1 then CA2.
 
 ```
@@ -36,5 +35,6 @@ For more information, please read the documentation included! Thank you.
 
 Thanks to the following contributors:
 
-Leong Kai Ling (@kailing231)
-Ong Kai Xin Elaine (@elaine24)
+Leong Kai Ling [@kailing231](https://github.com/kailing231)
+
+Ong Kai Xin (Elaine) [@elaine24](https://github.com/elaine24)
