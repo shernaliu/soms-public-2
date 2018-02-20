@@ -25,7 +25,7 @@ There are two parts to this project: CA1 then CA2.
 
 ```
 # clone this project into your raspberry pi
-git clone
+git clone https://github.com/shernaliu/soms-public-2.git
 
 # install required dependencies in both back_end and front_end directories
 npm install
