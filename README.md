@@ -2,18 +2,22 @@
 
 SOMS is built on the Mongo-ExpressJS-NodeJS (MEN) stack as well as supporting python codes.
 
-![alt text](http://res.cloudinary.com/shernaliu/image/upload/v1519070763/github-never-delete/men.jpg)
+![MEN Stack](http://res.cloudinary.com/shernaliu/image/upload/v1519070763/github-never-delete/men.jpg)
 
 Smart Office Management System (SOMS) is a Node.js web application that is used to manage certain processes required by people in an office environment. The web application interfaces with the Raspberry Pi 3 and various modules connected to it to carry out its functionalities.
 
 SOMS is an application to manage and track employees’ daily attendance, monitor and control the lights and camera in the office.
 
-![alt text](http://res.cloudinary.com/shernaliu/image/upload/v1519070527/github-never-delete/1-index.png)
+# SOMS Dashboard
+![SOMS Dashboard](http://res.cloudinary.com/shernaliu/image/upload/v1519070527/github-never-delete/1-index.png)
 
 For CA2, we will be extending from CA1 to include the functionality to allow users to track the number of people in a particular room. We will be utilising a lightweight communications protocol called Message Queuing Telemetry Transport (MQTT) to publish and subscribe messages to and from certain topics from the AWS IoT broker.
 
+# SOMS Rooms
+![SOMS Rooms](http://res.cloudinary.com/shernaliu/image/upload/v1519148078/github-never-delete/roomspage.png)
+
 # System Architecture
-![alt text](http://res.cloudinary.com/shernaliu/image/upload/v1519070363/github-never-delete/SYSTEM_ARCHITECTURE.png)
+![System Architecture](http://res.cloudinary.com/shernaliu/image/upload/v1519070363/github-never-delete/SYSTEM_ARCHITECTURE.png)
 
 ## Installing SOMS
 
